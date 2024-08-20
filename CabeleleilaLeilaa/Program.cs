@@ -15,10 +15,10 @@ namespace CabeleleilaLeilaa
 
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
-            var builder = new ConfigurationBuilder()
-            .SetBasePath(AppDomain.CurrentDomain.BaseDirectory) // Ensures the path is correct for Windows Forms
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-            IConfiguration configuration = builder.Build();
+            var configuration = new ConfigurationBuilder()
+            .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .Build();
 
             ApplicationConfiguration.Initialize();
 
