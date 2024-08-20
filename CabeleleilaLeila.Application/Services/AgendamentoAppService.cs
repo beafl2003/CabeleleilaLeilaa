@@ -46,7 +46,7 @@ namespace CabeleleilaLeila.Application.Services
             return agendamento;
         }
 
-        public AgendamentoServio GetAgendamentoServicoById(IConfiguration config, long num)
+        public DataTable GetAgendamentoServicoById(IConfiguration config, long num)
         {
             var agendamento = _agendamentoRepository.GetAgendamentoServicoById(config, num);
             return agendamento;

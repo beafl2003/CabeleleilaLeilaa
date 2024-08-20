@@ -95,7 +95,7 @@ namespace CabeleleilaLeila.Data.Repositories
             return agendamento;
         }
 
-        public AgendamentoServio GetAgendamentoServicoById(IConfiguration configuration, long num)
+        public DataTable GetAgendamentoServicoById(IConfiguration configuration, long num)
         {
             SqlConnection dbConnection = ConnectionProvider.GetConnection(configuration);
 
@@ -110,15 +110,18 @@ namespace CabeleleilaLeila.Data.Repositories
                     Agendamento
                     LEFT JOIN AgendamentoServico ON AgendamentoServico.NumAgendamento = Agendamento.NumAgendamento
                     LEFT JOIN Servico ON Servico.CdServico = AgendamentoServico.CdServico
-                    WHERE Agendamento.NumAgendamento = @NumAgendamento             
+                    WHERE Agendamento.NumAgendamento = {num}          
                         ";
 
-            var prm = new { NumAgendamento = num };
-            var agendamento = dbConnection.QueryFirstOrDefault<AgendamentoServio>(sql, prm);
+            var command = new SqlCommand(sql, dbConnection);
+            var adapter = new SqlDataAdapter(command);
+            var datatable = new DataTable();
+            adapter.Fill(datatable);
+
             dbConnection.Dispose();
             dbConnection = null;
 
-            return agendamento;
+            return datatable;
         }
 
         public bool InsertDatabase(IConfiguration configuration, Agendamento agendamento)

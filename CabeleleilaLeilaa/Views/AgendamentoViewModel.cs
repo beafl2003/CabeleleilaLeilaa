@@ -207,6 +207,8 @@ namespace CabeleleilaLeilaa.ChildForms
         private void FillFields(long currentId)
         {
             var agendamentoSelecionado = _agendamentoAppService.GetAgendamentoById(_config, currentId);
+            var agendamentoServicos = _agendamentoAppService.GetAgendamentoServicoById(_config, _currentId);
+
             if (agendamentoSelecionado == null)
             {
                 tbCodigo.Text = string.Empty;
@@ -264,10 +266,13 @@ namespace CabeleleilaLeilaa.ChildForms
         private void LoadData()
         {
             _loading = true;
-            var dtTable = _agendamentoAppService.GetAgendamentoServicoById(_config, _currentId);
 
-                dtGridAgendamentos.DataSource = dtTable;
-            
+            var dtTable = _agendamentoAppService.GetAgendamentoServicoById(_config, _currentId);
+            dtGridAgendamentos.DataSource = dtTable;
+
+
+
+
 
             ConfigureGrid();
             _loading = false;
@@ -308,6 +313,15 @@ namespace CabeleleilaLeilaa.ChildForms
             dtGridAgendamentos.AlternatingRowsDefaultCellStyle.ForeColor = Color.Black;
             dtGridAgendamentos.DefaultCellStyle.SelectionBackColor = Color.LavenderBlush;
             dtGridAgendamentos.DefaultCellStyle.SelectionForeColor = Color.Black;
+
+            if(dtGridAgendamentos.Rows.Count == 0)
+            {
+                dtGridAgendamentos.Columns.Add("NumAgendamento","Número");
+                dtGridAgendamentos.Columns.Add("CdServico", "Cd.Serviço");
+                dtGridAgendamentos.Columns.Add("Descricao", "Descrição");
+                dtGridAgendamentos.Columns.Add("Preco", "Preço");
+
+            }
 
             foreach (DataGridViewColumn col in dtGridAgendamentos.Columns)
             {

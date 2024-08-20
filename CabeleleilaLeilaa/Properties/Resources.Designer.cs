@@ -111,6 +111,36 @@ namespace CabeleleilaLeilaa.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        public static byte[] BELL {
+            get {
+                object obj = ResourceManager.GetObject("BELL", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        public static byte[] BELLB {
+            get {
+                object obj = ResourceManager.GetObject("BELLB", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        public static byte[] BELLI {
+            get {
+                object obj = ResourceManager.GetObject("BELLI", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         public static System.Drawing.Bitmap casaclaro {
@@ -177,6 +207,16 @@ namespace CabeleleilaLeilaa.Properties {
             get {
                 object obj = ResourceManager.GetObject("l__2__removebg_preview_u79_icon", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        public static byte[] LHANDW {
+            get {
+                object obj = ResourceManager.GetObject("LHANDW", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         
