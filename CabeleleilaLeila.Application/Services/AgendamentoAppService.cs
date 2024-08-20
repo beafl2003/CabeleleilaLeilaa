@@ -52,13 +52,13 @@ namespace CabeleleilaLeila.Application.Services
             return agendamento;
         }
 
-        public AgendamentoServio GetAgendamentoServicoEById(IConfiguration config, long num)
+        public AgendamentoServio GetAgendamentoServicoEById(IConfiguration config, long num, string cdservico)
         {
-            var agendamento = _agendamentoRepository.GetAgendamentoServicoEById(config, num);
+            var agendamento = _agendamentoRepository.GetAgendamentoServicoEById(config, num, cdservico);
             return agendamento;
         }
 
-        public Result NovoAgendamento(IConfiguration config, Guid clienteId, TipoAgendamentoEnum status, DateTime dtAgendamento,decimal preco)
+        public long NovoAgendamento(IConfiguration config, Guid clienteId, TipoAgendamentoEnum status, DateTime dtAgendamento,decimal preco)
         {
             var agendamento = new Agendamento()
             {
@@ -71,10 +71,8 @@ namespace CabeleleilaLeila.Application.Services
             };
 
 
-            if (_agendamentoRepository.InsertDatabase(config, agendamento))
-                return Result.Factory.True();
-            else
-                return Result.Factory.False();
+            return _agendamentoRepository.InsertDatabase(config, agendamento);
+            
 
         }
 
@@ -93,6 +91,36 @@ namespace CabeleleilaLeila.Application.Services
                 return Result.Factory.True();
             else
                 return Result.Factory.False();
+
+        }
+
+        public Result DeleteServico(IConfiguration config, long numAgendamento, string numServico)
+        {
+
+            var agendamento = _agendamentoRepository.GetAgendamentoServicoEById(config, numAgendamento, numServico);
+            if (agendamento == null)
+                return Result.Factory.False("Not Found");
+
+
+
+            _agendamentoRepository.DeleteServicoDatabase(config, numAgendamento, numServico);
+
+            return Result.Factory.True();
+
+        }
+
+        public Result DeleteAgendamento(IConfiguration config, long numAgendamento)
+        {
+
+            var agendamento = _agendamentoRepository.GetAgendamentoById(config, numAgendamento);
+            if (agendamento == null)
+                return Result.Factory.False("Not Found");
+
+
+
+            _agendamentoRepository.DeleteFromDatabase(config, numAgendamento);
+
+            return Result.Factory.True();
 
         }
         #endregion

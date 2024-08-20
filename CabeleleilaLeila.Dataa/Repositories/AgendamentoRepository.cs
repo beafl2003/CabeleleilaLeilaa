@@ -95,7 +95,7 @@ namespace CabeleleilaLeila.Data.Repositories
             return agendamento;
         }
 
-        public AgendamentoServio GetAgendamentoServicoEById(IConfiguration configuration, long num)
+        public AgendamentoServio GetAgendamentoServicoEById(IConfiguration configuration, long num, string cdservico)
         {
             SqlConnection dbConnection = ConnectionProvider.GetConnection(configuration);
 
@@ -110,10 +110,10 @@ namespace CabeleleilaLeila.Data.Repositories
                     Agendamento
                     LEFT JOIN AgendamentoServico ON AgendamentoServico.NumAgendamento = Agendamento.NumAgendamento
                     LEFT JOIN Servico ON Servico.CdServico = AgendamentoServico.CdServico
-                    WHERE Agendamento.NumAgendamento = @NumAgendamento          
+                    WHERE Agendamento.NumAgendamento = @NumAgendamento  and  Servico.CdServico = @CdServico     
                         ";
 
-            var prm = new { NumAgendamento = num};
+            var prm = new { NumAgendamento = num, CdServico = cdservico };
             var agendamento = dbConnection.QueryFirstOrDefault<AgendamentoServio>(sql, prm);
             var datatable = new DataTable();
             dbConnection.Dispose();
@@ -135,8 +135,8 @@ namespace CabeleleilaLeila.Data.Repositories
                     Servico.Preco
                     FROM
                     Agendamento
-                    LEFT JOIN AgendamentoServico ON AgendamentoServico.NumAgendamento = Agendamento.NumAgendamento
-                    LEFT JOIN Servico ON Servico.CdServico = AgendamentoServico.CdServico
+                    INNER JOIN AgendamentoServico ON AgendamentoServico.NumAgendamento = Agendamento.NumAgendamento
+                    INNER JOIN Servico ON Servico.CdServico = AgendamentoServico.CdServico
                     WHERE Agendamento.NumAgendamento = {num}          
                         ";
 
@@ -151,7 +151,7 @@ namespace CabeleleilaLeila.Data.Repositories
             return datatable;
         }
 
-        public bool InsertDatabase(IConfiguration configuration, Agendamento agendamento)
+        public long InsertDatabase(IConfiguration configuration, Agendamento agendamento)
         {
             SqlConnection dbConnection = ConnectionProvider.GetConnection(configuration);
             dbConnection.Open();
@@ -159,17 +159,19 @@ namespace CabeleleilaLeila.Data.Repositories
                 
                 INSERT INTO Agendamento (ClienteId, Status, CriadoEm, DtAgendamento, PrecoTotal)
                 VALUES (@ClienteId, @Status, @CriadoEm, @DtAgendamento, @PrecoTotal);
+
+                SELECT SCOPE_IDENTITY()
             
             ";
-            var rowsAffected = dbConnection.Execute(sql, agendamento);
+            var code = dbConnection.QueryFirstOrDefault<long>(sql, agendamento);
             if (dbConnection.State == ConnectionState.Open)
                 dbConnection.Close();
             dbConnection.Dispose();
             dbConnection = null;
 
-            if (rowsAffected > 0)
-                return true;
-            else return false;
+            if (code > 0)
+                return code;
+            else return 0;
 
         }
 
@@ -194,6 +196,74 @@ namespace CabeleleilaLeila.Data.Repositories
             else return false;
 
         }
+
+        public bool DeleteServicoDatabase(IConfiguration configuration, long num, string cdservico)
+        {
+
+            SqlConnection dbConnection = ConnectionProvider.GetConnection(configuration);
+            dbConnection.Open();
+
+            var sql = $@"
+                
+                DELETE FROM AgendamentoServico
+                WHERE NumAgendamento = @NumAgendamento
+                AND CdServico = @CdServico;
+            
+            ";
+
+            var command = new SqlCommand(sql, dbConnection);
+            command.Parameters.Add(new SqlParameter("@NumAgendamento", num));
+            command.Parameters.Add(new SqlParameter("@CdServico", cdservico));
+
+
+            var rowsAffected = command.ExecuteNonQuery();
+
+            if (dbConnection.State == ConnectionState.Open)
+                dbConnection.Close();
+
+            dbConnection.Dispose();
+            dbConnection = null;
+
+            if (rowsAffected > 0)
+                return true;
+            else return false;
+
+        }
+
+        public bool DeleteFromDatabase(IConfiguration configuration, long num)
+        {
+
+            SqlConnection dbConnection = ConnectionProvider.GetConnection(configuration);
+            dbConnection.Open();
+
+            var sql = $@"
+                
+                DELETE FROM AgendamentoServico
+                WHERE NumAgendamento = @NumAgendamento
+                
+                DELETE FROM Agendamento
+                 WHERE NumAgendamento = @NumAgendamento
+            
+            ";
+
+            var command = new SqlCommand(sql, dbConnection);
+            command.Parameters.Add(new SqlParameter("@NumAgendamento", num));
+
+
+            var rowsAffected = command.ExecuteNonQuery();
+
+            if (dbConnection.State == ConnectionState.Open)
+                dbConnection.Close();
+
+            dbConnection.Dispose();
+            dbConnection = null;
+
+            if (rowsAffected > 0)
+                return true;
+            else return false;
+
+        }
+
 
 
 

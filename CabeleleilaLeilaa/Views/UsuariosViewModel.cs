@@ -241,7 +241,7 @@ namespace CabeleleilaLeilaa.Views
 
             if (dtGridUsuarios.Rows[e.RowIndex].IsNewRow)
             {
-                return; // Ignora a última linha (linha de entrada de novos dados)
+                return; 
             }
 
             if (dtGridUsuarios.Columns[e.ColumnIndex].Name == "Senha")

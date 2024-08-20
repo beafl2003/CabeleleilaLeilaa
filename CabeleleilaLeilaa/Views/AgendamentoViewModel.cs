@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -21,12 +22,13 @@ namespace CabeleleilaLeilaa.ChildForms
     {
 
         private bool _loading;
-        private bool _editing;
+        private bool _editing = false;
         private bool _editingServico = false;
         private bool _newItem;
         private bool _newItemServico = false;
         private bool _filling;
         private long _currentId;
+        private string _currentServicoId = "";
         private decimal _valorTotal = 0;
         private readonly IConfiguration _config;
         private readonly AgendamentoAppService _agendamentoAppService;
@@ -42,24 +44,64 @@ namespace CabeleleilaLeilaa.ChildForms
 
             this.Shown += AgendamentoViewModel_Shown;
             this.tbData.KeyPress += TbData_KeyPress;
-            this.tbData.TextChanged += TbData_TextChanged;
             this.dtGridAgendamentos.SelectionChanged += dtGridAgendamentos_SelectionChanged;
-            this.tbCodigo.TextChanged += TbCodigo_TextChanged;
-            this.tbNome.TextChanged += TbNome_TextChanged; ;
-            this.tbData.TextChanged += TbData_TextChanged1; ;
-            this.tbCdServico.TextChanged += TbCdServico_TextChanged;
-            this.tbServicoDescricao.TextChanged += TbServicoDescricao_TextChanged;
-            this.tbVlTotal.TextChanged += TbVlTotal_TextChanged;
+            this.dtGridAgendamentos.CellFormatting += DtGridAgendamentos_CellFormatting;
             this.btnSave.Click += BtnSave_Click;
+            this.tbData.TextChanged += TbData_TextChanged;
             this.btnAdd.Click += BtnAdd_Click;
             this.btnDelete.Click += BtnDelete_Click;
             this.btnCancel.Click += BtnCancel_Click;
+            this.btnCancelServico.Click += BtnCancelServico_Click;
             this.tbCdServico.Leave += TbCdServico_Leave;
             this.tbCodigo.KeyDown += TbCodigo_KeyDown;
             this.btnAddServico.Click += BtnAddServico_Click;
             this.btnSalvarServico.Click += BtnSalvarServico_Click;
+            this.btnDeleteServico.Click += BtnDeleteServico_Click;
             tbCodigo.SelectionLength = 0;
 
+        }
+
+        private void CbStatus_TextChanged(object? sender, EventArgs e)
+        {
+            if (_filling)
+                return;
+
+            _editing = true;
+            HabilitaDesabilitaBotoes();
+        }
+
+        private void BtnCancelServico_Click(object? sender, EventArgs e)
+        {
+            ClearServico();
+            LoadData();
+            _newItemServico = false;
+            _editingServico = false;
+        }
+
+        private void BtnDeleteServico_Click(object? sender, EventArgs e)
+        {
+            var id = _currentId;
+            var r = _agendamentoAppService.DeleteServico(_config, id, _currentServicoId);
+            if (!r.Success)
+            {
+                this.NotifyError(r);
+                return;
+            }
+
+            LoadData();
+            ClearServico();
+
+            _newItemServico = false;
+            _editingServico = false;
+            HabilitaDesabilitaBotoes();
+        }
+
+        private void DtGridAgendamentos_CellFormatting(object? sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (dtGridAgendamentos.Rows[e.RowIndex].IsNewRow)
+            {
+                return;
+            }
         }
 
         private void BtnCancel_Click(object? sender, EventArgs e)
@@ -82,8 +124,14 @@ namespace CabeleleilaLeilaa.ChildForms
             {
 
 
-                if (_newItem)
+                if (_newItemServico)
                 {
+                    var jaExiste = _agendamentoAppService.GetAgendamentoServicoEById(_config, _currentId,  tbCdServico.Text.Trim());
+                    if ((jaExiste != null))
+                    {
+                        this.NotifyError(Result.Factory.False("Este serviço já existe para esse agendamento."));
+                        return;
+                    }
                     var r = _agendamentoAppService.NovoAgendamentoServico(_config, _currentId, tbCdServico.Text, decimal.Parse(tbVlTotal.Text));
                     if (!r.Success)
                     {
@@ -107,7 +155,9 @@ namespace CabeleleilaLeilaa.ChildForms
             ClearServico();
             _editingServico = true;
             _newItemServico = true;
+            _editing = false;
             HabilitaDesabilitaBotoes();
+            tbCdServico.Focus();
 
 
 
@@ -155,7 +205,22 @@ namespace CabeleleilaLeilaa.ChildForms
 
         private void BtnDelete_Click(object? sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            var id = _currentId;
+            var r = _agendamentoAppService.DeleteAgendamento(_config, id);
+            if (!r.Success)
+            {
+                this.NotifyError(r);
+                return;
+            }
+
+            LoadData();
+            Clear();
+
+            _newItemServico = false;
+            _editingServico = false;
+            _newItem = false;
+            _editing = false;
+            HabilitaDesabilitaBotoes();
         }
 
         private void BtnAdd_Click(object? sender, EventArgs e)
@@ -182,15 +247,23 @@ namespace CabeleleilaLeilaa.ChildForms
                 }
                 var r = _agendamentoAppService.NovoAgendamento(_config, newGuid, (TipoAgendamentoEnum)Enum.Parse(typeof(TipoAgendamentoEnum), cbStatus.SelectedItem.ToString()), DateTime.Parse(tbData.Text), valorTemp);
 
-                if (!r.Success)
+                if (r==0)
                 {
-                    this.NotifyError(r);
+                    this.NotifyError(Result.Factory.False("Falha ao inserir novo agendamento."));
                     return;
                 }
+
+                _currentId = r;
+                tbCodigo.Text = _currentId.ToString();
+
             }
+         
+
+            
+            LoadData();
             _newItem = false;
             _editing = false;
-            LoadData();
+            _editingServico = false;
             HabilitaDesabilitaBotoes();
         }
 
@@ -203,59 +276,16 @@ namespace CabeleleilaLeilaa.ChildForms
             HabilitaDesabilitaBotoes();
         }
 
-        private void TbServicoDescricao_TextChanged(object? sender, EventArgs e)
-        {
-            if (_filling)
-                return;
+  
 
-            _editingServico = true;
-            HabilitaDesabilitaBotoes();
-        }
 
-        private void TbCdServico_TextChanged(object? sender, EventArgs e)
-        {
-            if (_filling)
-                return;
 
-            _editingServico = true;
-            HabilitaDesabilitaBotoes();
-        }
+  
 
-        private void TbCdCliente_TextChanged(object? sender, EventArgs e)
-        {
-            if (_filling)
-                return;
 
-            _editing = true;
-            HabilitaDesabilitaBotoes();
-        }
 
-        private void TbData_TextChanged1(object? sender, EventArgs e)
-        {
-            if (_filling)
-                return;
 
-            _editing = true;
-            HabilitaDesabilitaBotoes();
-        }
 
-        private void TbNome_TextChanged(object? sender, EventArgs e)
-        {
-            if (_filling)
-                return;
-
-            _editing = true;
-            HabilitaDesabilitaBotoes();
-        }
-
-        private void TbCodigo_TextChanged(object? sender, EventArgs e)
-        {
-            if (_filling)
-                return;
-
-            _editing = true;
-            HabilitaDesabilitaBotoes();
-        }
 
         private void dtGridAgendamentos_SelectionChanged(object? sender, EventArgs e)
         {
@@ -265,6 +295,7 @@ namespace CabeleleilaLeilaa.ChildForms
                 {
                     var currentRow = selectedRow as DataGridViewRow;
                     _currentId = long.Parse(selectedRow.Cells["NumAgendamento"]?.Value?.ToString());
+                    _currentServicoId = selectedRow.Cells["CdServico"]?.Value?.ToString().Trim();
                     FillFields(_currentId);
                 }
             }
@@ -273,7 +304,7 @@ namespace CabeleleilaLeilaa.ChildForms
         private void FillFields(long currentId)
         {
             var agendamentoSelecionado = _agendamentoAppService.GetAgendamentoById(_config, currentId);
-            var agendamentoServicos = _agendamentoAppService.GetAgendamentoServicoEById(_config, _currentId);
+            var agendamentoServicos = _agendamentoAppService.GetAgendamentoServicoEById(_config, _currentId, _currentServicoId);
 
             if (agendamentoSelecionado == null)
             {
@@ -290,8 +321,8 @@ namespace CabeleleilaLeilaa.ChildForms
                 tbCodigo.Text = agendamentoSelecionado.NumAgendamento.ToString().Trim();
                 tbNome.Text = agendamentoSelecionado.ClienteId.ToString().Trim();
                 tbData.Text = DateTime.Parse(agendamentoSelecionado.DtAgendamento.ToString()).ToString("dd/MM/yyyy").Trim();
-                tbCdServico.Text = agendamentoServicos.CdServico;
-                tbServicoDescricao.Text = agendamentoServicos.Descricao;
+                tbCdServico.Text = agendamentoServicos?.CdServico;
+                tbServicoDescricao.Text = agendamentoServicos?.Descricao;
                 tbVlTotal.Text = agendamentoSelecionado.PrecoTotal.ToString().Trim();
                 var status = Enum.Parse(typeof(TipoAgendamentoEnum), agendamentoSelecionado.Status.ToString());
                 cbStatus.SelectedItem = status;
@@ -351,7 +382,7 @@ namespace CabeleleilaLeilaa.ChildForms
             {
 
                 btnAdd.Enabled = false;
-                btnDelete.Enabled = true;
+                btnDelete.Enabled = false;
                 btnCancel.Enabled = true;
                 btnSave.Enabled = true;
                 tbNome.Enabled = true;
@@ -366,7 +397,7 @@ namespace CabeleleilaLeilaa.ChildForms
                 btnAddServico.Enabled = true;
                 tbCodigo.Enabled = true;
                 btnAdd.Enabled = true;
-                btnDelete.Enabled = false;
+                btnDelete.Enabled = true;
                 btnCancel.Enabled = false;
                 btnSave.Enabled = false;
                 tbNome.Enabled = false;
@@ -381,7 +412,7 @@ namespace CabeleleilaLeilaa.ChildForms
                 {
 
                     btnAddServico.Enabled = false;
-                    btnDeleteServico.Enabled = true;
+                    btnDeleteServico.Enabled = false;
                     btnCancelServico.Enabled = true;
                     btnSalvarServico.Enabled = true;
                     tbCdServico.Enabled = true;
@@ -393,7 +424,7 @@ namespace CabeleleilaLeilaa.ChildForms
                 {
 
                     btnAddServico.Enabled = true;
-                    btnDeleteServico.Enabled = false;
+                    btnDeleteServico.Enabled = true;
                     btnCancelServico.Enabled = false;
                     btnSalvarServico.Enabled = false;
                     tbCdServico.Enabled = false;
@@ -403,40 +434,14 @@ namespace CabeleleilaLeilaa.ChildForms
                 };
             }
 
-
-
-            if (_currentId == 0 && !_newItem)
+            if (this._currentId == 0)
             {
                 btnAddServico.Enabled = false;
                 btnDeleteServico.Enabled = false;
-                btnCancelServico.Enabled = false;
-                btnSalvarServico.Enabled = false;
-                tbCdServico.Enabled = false;
-                tbServicoDescricao.Enabled = false;
-                tbVlTotal.Enabled = false;
-                btnAddServico.BackColor = Color.LightGray;
-                btnDeleteServico.BackColor = Color.LightGray;
-                btnCancelServico.BackColor = Color.LightGray;
-                btnSalvarServico.BackColor = Color.LightGray;
-                tbData.Enabled = false;
-                cbStatus.Enabled = false;
-                tbNome.Enabled = false;
-                btnDelete.Enabled = false; 
-                btnCancel.Enabled = false;
-                btnSave.Enabled = false;
-
-
+                btnDelete.Enabled = false;
             }
-            else { 
-
-                btnAddServico.BackColor = Color.White;
-                btnDeleteServico.BackColor = Color.White;
-                btnCancelServico.BackColor = Color.White;
-                btnSalvarServico.BackColor = Color.White;
 
 
-
-            }
 
 
 
