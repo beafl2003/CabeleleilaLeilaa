@@ -265,15 +265,8 @@ namespace CabeleleilaLeilaa.ChildForms
         {
             _loading = true;
             var dtTable = _agendamentoAppService.GetAgendamentoServicoById(_config, _currentId);
-            if (dtTable == null)
-            { 
-                dtGridAgendamentos.DataSource = _agendamentoAppService.LoadAgendaServFromDatabase(_config);
 
-            }
-            else
-            {
                 dtGridAgendamentos.DataSource = dtTable;
-            }
             
 
             ConfigureGrid();

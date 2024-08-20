@@ -131,6 +131,7 @@ namespace CabeleleilaLeilaa.Views
                 tbSenha.MaxLength = 10;
                 tbUsuario.MaxLength = 10;
 
+
                 if (_olhinhoEstaAberto)
                 {
 

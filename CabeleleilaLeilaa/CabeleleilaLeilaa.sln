@@ -17,6 +17,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CabeleleilaLeila.Applicatio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CabeleleilaLeila.Domain", "..\CabeleleilaLeila.Domain\CabeleleilaLeila.Domain.csproj", "{3038D321-B76E-4A68-AE36-631B12F708FF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C930712C-6DF1-47B8-969F-02A61C8630D3}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\Desktop\CabeleleilaLeila_Anna\BELL.TTF = ..\..\..\Desktop\CabeleleilaLeila_Anna\BELL.TTF
+		..\..\..\Desktop\CabeleleilaLeila_Anna\BELLB.TTF = ..\..\..\Desktop\CabeleleilaLeila_Anna\BELLB.TTF
+		..\..\..\Desktop\CabeleleilaLeila_Anna\BELLI.TTF = ..\..\..\Desktop\CabeleleilaLeila_Anna\BELLI.TTF
+		..\..\..\Desktop\CabeleleilaLeila_Anna\LHANDW.TTF = ..\..\..\Desktop\CabeleleilaLeila_Anna\LHANDW.TTF
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
