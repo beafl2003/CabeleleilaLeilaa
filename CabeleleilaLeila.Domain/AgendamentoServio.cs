@@ -11,7 +11,7 @@ namespace CabeleleilaLeila.Domain
         public required long NumAgendamento { get; set; }
 
         public required string CdServico { get; set; }
-        public required string Descricao { get; set; }
+        public string Descricao { get; set; }
 
         public Servico servico { get; set; }
 

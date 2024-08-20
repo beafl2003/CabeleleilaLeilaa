@@ -42,6 +42,8 @@
             btnCancel = new Button();
             btnAdd = new Button();
             panel1 = new Panel();
+            btnDeleteServico = new Button();
+            btnAddServico = new Button();
             label1 = new Label();
             lbValorTotal = new Label();
             tbVlTotal = new TextBox();
@@ -52,6 +54,8 @@
             tbData = new TextBox();
             label2 = new Label();
             backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            btnSalvarServico = new Button();
+            btnCancelServico = new Button();
             tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dtGridAgendamentos).BeginInit();
             panel2.SuspendLayout();
@@ -226,6 +230,10 @@
             // 
             panel1.BackColor = Color.Gainsboro;
             tableLayoutPanel1.SetColumnSpan(panel1, 7);
+            panel1.Controls.Add(btnSalvarServico);
+            panel1.Controls.Add(btnCancelServico);
+            panel1.Controls.Add(btnDeleteServico);
+            panel1.Controls.Add(btnAddServico);
             panel1.Controls.Add(label1);
             panel1.Controls.Add(lbValorTotal);
             panel1.Controls.Add(tbVlTotal);
@@ -239,6 +247,27 @@
             panel1.Size = new Size(1025, 147);
             panel1.TabIndex = 14;
             // 
+            // btnDeleteServico
+            // 
+            btnDeleteServico.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnDeleteServico.FlatAppearance.BorderSize = 0;
+            btnDeleteServico.Location = new Point(624, 100);
+            btnDeleteServico.Name = "btnDeleteServico";
+            btnDeleteServico.Size = new Size(123, 29);
+            btnDeleteServico.TabIndex = 6;
+            btnDeleteServico.Text = "Deletar";
+            btnDeleteServico.UseVisualStyleBackColor = true;
+            // 
+            // btnAddServico
+            // 
+            btnAddServico.FlatAppearance.BorderSize = 0;
+            btnAddServico.Location = new Point(495, 100);
+            btnAddServico.Name = "btnAddServico";
+            btnAddServico.Size = new Size(123, 29);
+            btnAddServico.TabIndex = 14;
+            btnAddServico.Text = "Novo";
+            btnAddServico.UseVisualStyleBackColor = true;
+            // 
             // label1
             // 
             label1.AutoSize = true;
@@ -251,11 +280,11 @@
             // lbValorTotal
             // 
             lbValorTotal.AutoSize = true;
-            lbValorTotal.Location = new Point(777, 112);
+            lbValorTotal.Location = new Point(918, 46);
             lbValorTotal.Name = "lbValorTotal";
-            lbValorTotal.Size = new Size(62, 20);
+            lbValorTotal.Size = new Size(77, 20);
             lbValorTotal.TabIndex = 12;
-            lbValorTotal.Text = "Vl. Total";
+            lbValorTotal.Text = "Vl. Serviço";
             // 
             // tbVlTotal
             // 
@@ -263,7 +292,7 @@
             tbVlTotal.BorderStyle = BorderStyle.None;
             tbVlTotal.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             tbVlTotal.ForeColor = Color.RoyalBlue;
-            tbVlTotal.Location = new Point(852, 112);
+            tbVlTotal.Location = new Point(834, 23);
             tbVlTotal.Name = "tbVlTotal";
             tbVlTotal.Size = new Size(161, 20);
             tbVlTotal.TabIndex = 11;
@@ -324,6 +353,28 @@
             label2.TabIndex = 16;
             label2.Text = "Status";
             // 
+            // btnSalvarServico
+            // 
+            btnSalvarServico.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnSalvarServico.FlatAppearance.BorderSize = 0;
+            btnSalvarServico.Location = new Point(882, 100);
+            btnSalvarServico.Name = "btnSalvarServico";
+            btnSalvarServico.Size = new Size(123, 29);
+            btnSalvarServico.TabIndex = 7;
+            btnSalvarServico.Text = "Salvar";
+            btnSalvarServico.UseVisualStyleBackColor = true;
+            // 
+            // btnCancelServico
+            // 
+            btnCancelServico.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnCancelServico.FlatAppearance.BorderSize = 0;
+            btnCancelServico.Location = new Point(753, 100);
+            btnCancelServico.Name = "btnCancelServico";
+            btnCancelServico.Size = new Size(123, 29);
+            btnCancelServico.TabIndex = 6;
+            btnCancelServico.Text = "Cancelar";
+            btnCancelServico.UseVisualStyleBackColor = true;
+            // 
             // AgendamentoViewModel
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -370,5 +421,9 @@
         private Label label1;
         private ComboBox cbStatus;
         private Label label2;
+        private Button btnDeleteServico;
+        private Button btnAddServico;
+        private Button btnSalvarServico;
+        private Button btnCancelServico;
     }
 }

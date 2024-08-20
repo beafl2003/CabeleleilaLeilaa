@@ -52,6 +52,12 @@ namespace CabeleleilaLeila.Application.Services
             return agendamento;
         }
 
+        public AgendamentoServio GetAgendamentoServicoEById(IConfiguration config, long num)
+        {
+            var agendamento = _agendamentoRepository.GetAgendamentoServicoEById(config, num);
+            return agendamento;
+        }
+
         public Result NovoAgendamento(IConfiguration config, Guid clienteId, TipoAgendamentoEnum status, DateTime dtAgendamento,decimal preco)
         {
             var agendamento = new Agendamento()
@@ -66,6 +72,24 @@ namespace CabeleleilaLeila.Application.Services
 
 
             if (_agendamentoRepository.InsertDatabase(config, agendamento))
+                return Result.Factory.True();
+            else
+                return Result.Factory.False();
+
+        }
+
+        public Result NovoAgendamentoServico(IConfiguration config, long numAgendamento, string cdServico, decimal preco)
+        {
+            var agendamento = new AgendamentoServio()
+            {
+                NumAgendamento = numAgendamento,
+                CdServico = cdServico,
+                Preco = preco
+
+            };
+
+
+            if (_agendamentoRepository.InsertServicoDatabase(config, agendamento))
                 return Result.Factory.True();
             else
                 return Result.Factory.False();

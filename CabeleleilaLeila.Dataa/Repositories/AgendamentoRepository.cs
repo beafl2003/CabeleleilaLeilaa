@@ -95,6 +95,33 @@ namespace CabeleleilaLeila.Data.Repositories
             return agendamento;
         }
 
+        public AgendamentoServio GetAgendamentoServicoEById(IConfiguration configuration, long num)
+        {
+            SqlConnection dbConnection = ConnectionProvider.GetConnection(configuration);
+
+            dbConnection.Open();
+            var sql = $@"
+                        SELECT 
+                    Agendamento.NumAgendamento,
+                    Servico.CdServico,
+                    Servico.Descricao,
+                    Servico.Preco
+                    FROM
+                    Agendamento
+                    LEFT JOIN AgendamentoServico ON AgendamentoServico.NumAgendamento = Agendamento.NumAgendamento
+                    LEFT JOIN Servico ON Servico.CdServico = AgendamentoServico.CdServico
+                    WHERE Agendamento.NumAgendamento = @NumAgendamento          
+                        ";
+
+            var prm = new { NumAgendamento = num};
+            var agendamento = dbConnection.QueryFirstOrDefault<AgendamentoServio>(sql, prm);
+            var datatable = new DataTable();
+            dbConnection.Dispose();
+            dbConnection = null;
+
+            return agendamento;
+        }
+
         public DataTable GetAgendamentoServicoById(IConfiguration configuration, long num)
         {
             SqlConnection dbConnection = ConnectionProvider.GetConnection(configuration);
@@ -145,6 +172,29 @@ namespace CabeleleilaLeila.Data.Repositories
             else return false;
 
         }
+
+        public bool InsertServicoDatabase(IConfiguration configuration, AgendamentoServio agendamento)
+        {
+            SqlConnection dbConnection = ConnectionProvider.GetConnection(configuration);
+            dbConnection.Open();
+            var sql = $@"
+                
+                INSERT INTO AgendamentoServico (NumAgendamento, CdServico, Preco)
+                VALUES (@NumAgendamento, @CdServico, @Preco);
+            
+            ";
+            var rowsAffected = dbConnection.Execute(sql, agendamento);
+            if (dbConnection.State == ConnectionState.Open)
+                dbConnection.Close();
+            dbConnection.Dispose();
+            dbConnection = null;
+
+            if (rowsAffected > 0)
+                return true;
+            else return false;
+
+        }
+
 
 
     }
