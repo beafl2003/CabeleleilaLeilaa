@@ -17,7 +17,11 @@ namespace CabeleleilaLeila.Domain
 
         public string Name { get; set; }
 
-        public string CPF { get; set; }
+       // public string CPF { get; set; }
+
+        public DateTime BirthDate { get; set; } 
+
+        public string Email { get; set; } = string.Empty;
 
         public string Cell { get; set; }
 

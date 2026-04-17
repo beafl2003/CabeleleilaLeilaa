@@ -98,7 +98,7 @@ namespace CabeleleilaLeilaa
 
         private void btnClientes_Click()
         {
-            var clientesForm = new ClienteViewModel();
+            var clientesForm = new ClienteViewModel(_config);
             clientesForm.MdiParent = this;
             clientesForm.StartPosition = FormStartPosition.CenterScreen;
 
