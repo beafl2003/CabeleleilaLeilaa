@@ -1,4 +1,5 @@
 ﻿using CabeleleilaLeila.Application.Services;
+using CabeleleilaLeila.Domain.Enums;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -26,14 +27,27 @@ namespace CabeleleilaLeilaa.ChildForms
             _config = config;
             _clienteAppService = new ClienteAppService();
             LoadData();
+            FormConfigurations();
 
 
+        }
+
+        private void FormConfigurations()
+        {
+            this.MaximumSize = new Size(889, 545);
+            this.MaximizeBox = false;
+            this.cbAtivo.DataSource = Enum.GetValues(typeof(StatusClienteEnum));
         }
 
         private void LoadData()
         {
             var servicesTable = _clienteAppService.LoadFromDataBase(_config);
             dtGridClientes.DataSource = servicesTable;
+        }
+
+        private void panel2_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }
