@@ -201,9 +201,9 @@
             lbCode.AutoSize = true;
             lbCode.Location = new Point(6, 22);
             lbCode.Name = "lbCode";
-            lbCode.Size = new Size(58, 20);
+            lbCode.Size = new Size(55, 20);
             lbCode.TabIndex = 5;
-            lbCode.Text = "Código";
+            lbCode.Text = "Cliente";
             // 
             // tbCodigo
             // 
